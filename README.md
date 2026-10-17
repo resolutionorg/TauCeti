@@ -1,3 +1,5 @@
+> **resolutionorg compatibility fork (branch `v4.35.0-compat`).** Temporary: upstream Tau Ceti `1f9b4414` patched to build on the Mathlib `v4.35.0` tag instead of Mathlib master, so the resolution monorepo can share one Mathlib. Only the modules the monorepo imports are checked. Retire this fork once upstream Tau Ceti and the Mathlib tags line up.
+
 <p align="center">
   <img src="assets/header.png" alt="Tau Ceti" width="820">
 </p>
