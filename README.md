@@ -87,6 +87,8 @@ repository admin role; removing that role invalidates its scope authority.
 Other users follow the existing review policy. See the
 [bors rollout and behavior documentation](https://github.com/TauCetiProject/bors-ng/blob/master/deploy/manual-approval.md).
 
+> **resolutionorg compatibility fork (branch `v4.35.0-compat-mfdual`).** Temporary: upstream Tau Ceti `a422828c` patched to build on the Mathlib `v4.35.0` tag instead of Mathlib master, so the resolution monorepo's `lean/ainfmf` can share one Mathlib with `lean/resolution-common`. Only the modules `ainfmf` imports are checked. Retire this branch once upstream Tau Ceti and the Mathlib tags line up.
+
 ## Mathlib dependency
 
 Although Tau Ceti and [Mathlib](https://leanprover-community.github.io/) differ both in the review mechanisms and in design standards, and while they target different mathematical goals, we envision a strong synergy between the two libraries. We hope to build overlapping communities around both libraries.
