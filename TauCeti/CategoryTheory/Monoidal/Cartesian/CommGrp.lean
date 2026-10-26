@@ -23,7 +23,7 @@ multiplication is composition.
 
 For commutative group schemes over a base scheme `S`, that is `C = Over S`, this is the abelian
 group of homomorphisms `Hom_S(G, H)` and the endomorphism ring `End_S(G)`, in which an integer
-`n` acts as multiplication by `n` (`CommGrp.intCast_hom_hom_hom`).
+`n` acts as multiplication by `n` (`CommGrp.intCast_asHom_hom_hom_hom`).
 
 The group law is written additively on morphisms of `CommGrp C`, while the group law on points of
 a group object is written multiplicatively (Mathlib's scoped instance `CategoryTheory.Hom.group`),
@@ -41,7 +41,7 @@ so `f + g` corresponds to the product of the underlying morphisms (`CommGrp.add_
   `CategoryTheory.CommGrp.neg_hom_hom_hom`, `CategoryTheory.CommGrp.sub_hom_hom_hom` and
   `CategoryTheory.CommGrp.zsmul_hom_hom_hom`: the group operations on morphisms of `CommGrp C`
   are the pointwise ones.
-* `CategoryTheory.CommGrp.intCast_hom_hom_hom`: the integer `n` in the endomorphism ring of a
+* `CategoryTheory.CommGrp.intCast_asHom_hom_hom_hom`: the integer `n` in the endomorphism ring of a
   commutative group object `A` is the `n`-th power of the identity of `A.X` for the group law on
   points, that is, multiplication by `n`.
 -/
@@ -123,15 +123,15 @@ noncomputable instance instPreadditive : Preadditive (CommGrp C) where
 /-- The integer `n` in the endomorphism ring of a commutative group object `A` is multiplication
 by `n`: the `n`-th power of the identity of `A.X` for the group law on points. -/
 @[simp]
-theorem intCast_hom_hom_hom (A : CommGrp C) (n : ℤ) :
-    (n : End A).hom.hom.hom = 𝟙 A.X ^ n := by
-  rw [← zsmul_one, zsmul_hom_hom_hom, End.one_def, id_hom, Grp.id_hom_hom]
+theorem intCast_asHom_hom_hom_hom (A : CommGrp C) (n : ℤ) :
+    (n : End A).asHom.hom.hom.hom = 𝟙 A.X ^ n := by
+  rw [← zsmul_one, End.zsmul_asHom, zsmul_hom_hom_hom, End.one_asHom, id_hom, Grp.id_hom_hom]
 
 /-- The natural number `n` in the endomorphism ring of a commutative group object `A` is
 multiplication by `n`: the `n`-th power of the identity of `A.X` for the group law on points. -/
 @[simp]
-theorem natCast_hom_hom_hom (A : CommGrp C) (n : ℕ) :
-    (n : End A).hom.hom.hom = 𝟙 A.X ^ n := by
-  rw [← Int.cast_natCast, intCast_hom_hom_hom, zpow_natCast]
+theorem natCast_asHom_hom_hom_hom (A : CommGrp C) (n : ℕ) :
+    (n : End A).asHom.hom.hom.hom = 𝟙 A.X ^ n := by
+  rw [← Int.cast_natCast, intCast_asHom_hom_hom_hom, zpow_natCast]
 
 end CategoryTheory.CommGrp

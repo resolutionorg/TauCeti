@@ -131,7 +131,7 @@ def globalSectionsAction
   map_add' := fun r s ↦ End.ext (globalSectionsSmul_add M r s)
 
 @[simp]
-lemma globalSectionsAction_apply
+lemma globalSectionsAction_apply_asHom
     (M : X.Modules) (r : Γ(X, ⊤)) :
     (globalSectionsAction M r).asHom = globalSectionsSmul M r :=
   by rfl

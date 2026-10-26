@@ -53,7 +53,8 @@ private theorem coeff_succ_pow_succ_eq_of_isAddTorsionFree [IsAddTorsionFree R] 
   have h := coeff_derivative (v ^ (n + 1)) n
   rw [derivative_pow, Nat.add_sub_cancel, mul_assoc, ← map_natCast (C (R := R)), coeff_C_mul,
     Nat.cast_add_one] at h
-  apply nsmul_right_injective (Nat.succ_ne_zero n)
+  apply eq_of_nsmul_eq_nsmul_of_addCommute (Nat.succ_ne_zero n)
+    ((addCommute_iff_eq _ _).2 (add_comm _ _))
   simp only [nsmul_eq_mul, Nat.cast_succ]
   rw [h, mul_comm]
 

@@ -47,7 +47,7 @@ isomorphism for every `M`, with no finiteness condition.
   morphisms of `C` by `TauCeti.PresheafOfModules.ihomObjEquiv_map_app`, and natural in the target
   and in the source by `TauCeti.PresheafOfModules.ihomObjEquiv_ihom_map_app` and
   `TauCeti.PresheafOfModules.ihomObjEquiv_pre_app_app`;
-* `TauCeti.PresheafOfModules.ihomObjEquiv_ihomComparison_natTrans_app_app`: on sections, the
+* `TauCeti.PresheafOfModules.ihomObjEquiv_ihomComparison_app_app`: on sections, the
   internal Hom comparison for restriction to a slice is restriction along the iterated-slice
   equivalence;
 * `TauCeti.PresheafOfModules.isIso_ihomComparison_pushforward₀_overForget`: restriction to a slice
@@ -178,7 +178,7 @@ variable (M N : PresheafOfModulesOfCommRing.{u} R)
 restriction along the iterated-slice equivalence: a section of `𝓗om(M, N)` over `Y.left`,
 viewed as a morphism `M|_{Y.left} ⟶ N|_{Y.left}`, is sent to the section of
 `𝓗om(M|_X, N|_X)` over `Y` given by the same morphism on the iterated slice over `Y`. -/
-theorem ihomObjEquiv_ihomComparison_natTrans_app_app (Y : Over X)
+theorem ihomObjEquiv_ihomComparison_app_app (Y : Over X)
     (s : ((ihom M).obj N).obj (op Y.left)) :
     ihomObjEquiv Y ((pushforward₀ (Over.forget X) R).obj M)
         ((pushforward₀ (Over.forget X) R).obj N)
@@ -208,7 +208,7 @@ private theorem iteratedSliceEquiv_unit_app_left_left (Y : Over X) (Z : Over Y) 
     ((Over.iteratedSliceEquiv Y).unit.app Z).left.left = 𝟙 Z.left.left := rfl
 
 /-- The internal Hom comparison for restriction to a slice is bijective on sections. -/
-private theorem bijective_ihomComparison_natTrans_app_app (Y : Over X) :
+private theorem bijective_ihomComparison_app_app (Y : Over X) :
     Function.Bijective
       ((((pushforward₀ (Over.forget X) R).ihomComparison M).app N).app (op Y)) := by
   let F := pushforward₀ (Over.forget X) R
@@ -246,14 +246,14 @@ private theorem bijective_ihomComparison_natTrans_app_app (Y : Over X) :
   · apply (ihomObjEquiv Y.left M N).injective
     have hmaps : fwd.map (ihomObjEquiv Y.left M N s) =
         fwd.map (ihomObjEquiv Y.left M N s') :=
-      (ihomObjEquiv_ihomComparison_natTrans_app_app X M N Y s).symm.trans
+      (ihomObjEquiv_ihomComparison_app_app X M N Y s).symm.trans
         ((congrArg (ihomObjEquiv Y (F.obj M) (F.obj N)) h).trans
-          (ihomObjEquiv_ihomComparison_natTrans_app_app X M N Y s'))
+          (ihomObjEquiv_ihomComparison_app_app X M N Y s'))
     exact (left_inv _).symm.trans ((congrArg bwd.map hmaps).trans (left_inv _))
   · let ψ := ihomObjEquiv Y (F.obj M) (F.obj N) t
     refine ⟨(ihomObjEquiv Y.left M N).symm (bwd.map ψ),
       (ihomObjEquiv Y (F.obj M) (F.obj N)).injective
-        ((ihomObjEquiv_ihomComparison_natTrans_app_app X M N Y _).trans
+        ((ihomObjEquiv_ihomComparison_app_app X M N Y _).trans
           ((congrArg fwd.map (Equiv.apply_symm_apply _ _)).trans (right_inv ψ)))⟩
 
 /-- Restriction to the slice over `X` commutes with internal Hom: the canonical comparison
@@ -262,8 +262,8 @@ instance isIso_ihomComparison_pushforward₀_overForget :
     IsIso ((pushforward₀ (Over.forget X) R).ihomComparison M) := by
   rw [NatTrans.isIso_iff_isIso_app]
   intro N
-  have := mono_of_injective fun Y ↦ (bijective_ihomComparison_natTrans_app_app X M N Y.unop).1
-  have := epi_of_surjective fun Y ↦ (bijective_ihomComparison_natTrans_app_app X M N Y.unop).2
+  have := mono_of_injective fun Y ↦ (bijective_ihomComparison_app_app X M N Y.unop).1
+  have := epi_of_surjective fun Y ↦ (bijective_ihomComparison_app_app X M N Y.unop).2
   exact isIso_of_mono_of_epi _
 
 end Restriction
