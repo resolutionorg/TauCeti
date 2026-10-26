@@ -90,24 +90,19 @@ variable (P : RigidifiedLineBundle s)
 /-- The automorphisms of the line bundle underlying a rigidified line bundle `P` that respect
 its rigidification: those whose pullback along `s` carries the trivialization to itself. -/
 def autSubgroup : Subgroup (Aut P.lineBundle.obj) where
-  carrier := {e | (Scheme.Modules.pullback s).map e.hom ≫ P.rigidification.hom =
+  carrier := {e | (Scheme.Modules.pullback s).map e.asIso.hom ≫ P.rigidification.hom =
     P.rigidification.hom}
   one_mem' := by
     rw [Set.mem_ofPred_eq]
-    -- The unit of `Aut` is the identity isomorphism; Mathlib has no lemma for its `hom`.
-    have hone : (1 : Aut P.lineBundle.obj).hom = 𝟙 _ := rfl
-    rw [hone, CategoryTheory.Functor.map_id, Category.id_comp]
+    rw [Aut.one_asIso, Iso.refl_hom, CategoryTheory.Functor.map_id, Category.id_comp]
   mul_mem' {e e'} he he' := by
     rw [Set.mem_ofPred_eq] at he he' ⊢
-    have hmul : (e * e').hom = e'.hom ≫ e.hom :=
-      (congrArg Iso.hom (Aut.Aut_mul_def _ e e')).trans (Iso.trans_hom e' e)
-    rw [hmul, Functor.map_comp, Category.assoc, he, he']
+    rw [Aut.mul_asIso, Iso.trans_hom, Functor.map_comp, Category.assoc, he, he']
   inv_mem' {e} he := by
     rw [Set.mem_ofPred_eq] at he ⊢
-    have hinv : (e⁻¹).hom = e.inv := (congrArg Iso.hom (Aut.Aut_inv_def _ e)).trans (Iso.symm_hom e)
-    rw [hinv]
+    rw [Aut.inv_asIso, Iso.symm_hom]
     conv_lhs => rw [← he]
-    rw [← Category.assoc, ← Functor.map_comp, e.inv_hom_id, CategoryTheory.Functor.map_id,
+    rw [← Category.assoc, ← Functor.map_comp, e.asIso.inv_hom_id, CategoryTheory.Functor.map_id,
       Category.id_comp]
 
 /-- An automorphism of the line bundle respects the rigidification when its pullback along `s`
@@ -115,21 +110,22 @@ carries the trivialization to itself. -/
 @[simp]
 lemma mem_autSubgroup_iff (e : Aut P.lineBundle.obj) :
     e ∈ P.autSubgroup ↔
-      (Scheme.Modules.pullback s).map e.hom ≫ P.rigidification.hom = P.rigidification.hom :=
+      (Scheme.Modules.pullback s).map e.asIso.hom ≫ P.rigidification.hom = P.rigidification.hom :=
   Iff.rfl
 
 /-- The automorphism of the line bundle given by a global unit `u` of `Y` respects the
 rigidification exactly when `u` pulls back to `1` along `s`. -/
 lemma unitsGlobalSectionsMulEquivAut_mem_autSubgroup_iff (u : Γ(Y, ⊤)ˣ) :
     unitsGlobalSectionsMulEquivAut P.lineBundle.obj u ∈ P.autSubgroup ↔ s.appTop u = 1 := by
-  rw [mem_autSubgroup_iff, unitsGlobalSectionsMulEquivAut_apply_hom,
+  rw [mem_autSubgroup_iff, unitsGlobalSectionsMulEquivAut_apply_asIso_hom,
     pullback_map_globalSectionsSmul, globalSectionsSmul_naturality]
   -- `isInvertible_unit` is stated at `SheafOfModules.unit T.ringCatSheaf`, which instance
   -- resolution does not recognise as `𝟙_ T.Modules`.
   have : SheafOfModules.isInvertible T (𝟙_ T.Modules) := SheafOfModules.isInvertible_unit T
   refine ⟨fun h ↦ globalSectionsAction_injective (𝟙_ T.Modules) ?_,
     fun h ↦ by rw [h, globalSectionsSmul_one, Category.comp_id]⟩
-  rw [globalSectionsAction_apply, globalSectionsAction_apply, globalSectionsSmul_one]
+  apply End.ext
+  rw [globalSectionsAction_apply_asHom, globalSectionsAction_apply_asHom, globalSectionsSmul_one]
   exact (cancel_epi P.rigidification.hom).mp (h.trans (Category.comp_id _).symm)
 
 /-- **Rigidity of rigidified line bundles.** A rigidified line bundle has no automorphisms other
@@ -253,14 +249,16 @@ lemma mk_mk_eq_mk_mk_iff (L : InvertibleSheaf Y)
   dsimp only
   constructor
   · rintro ⟨e, he⟩
-    obtain ⟨u, hu⟩ := (unitsGlobalSectionsMulEquivAut L.obj).surjective e
+    obtain ⟨u, hu⟩ := (unitsGlobalSectionsMulEquivAut L.obj).surjective (Aut.of e)
+    have hu' : (unitsGlobalSectionsMulEquivAut L.obj u).asIso = e :=
+      congrArg Aut.asIso hu
     refine ⟨u, ?_⟩
-    rw [← hu, unitsGlobalSectionsMulEquivAut_apply_hom, pullback_map_globalSectionsSmul,
+    rw [← hu', unitsGlobalSectionsMulEquivAut_apply_asIso_hom, pullback_map_globalSectionsSmul,
       globalSectionsSmul_naturality] at he
     exact he.symm
   · rintro ⟨u, hu⟩
-    refine ⟨unitsGlobalSectionsMulEquivAut L.obj u, ?_⟩
-    rw [unitsGlobalSectionsMulEquivAut_apply_hom, pullback_map_globalSectionsSmul,
+    refine ⟨(unitsGlobalSectionsMulEquivAut L.obj u).asIso, ?_⟩
+    rw [unitsGlobalSectionsMulEquivAut_apply_asIso_hom, pullback_map_globalSectionsSmul,
       globalSectionsSmul_naturality, hu]
 
 /-- Two classes of rigidified line bundles with the same underlying line-bundle class differ by
@@ -275,9 +273,9 @@ lemma exists_smul_eq_of_toLineBundleClass_eq {a b : RigidifiedLineBundleClass s}
   -- The unit comparing the two trivializations through `e`.
   have : SheafOfModules.isInvertible T (𝟙_ T.Modules) := SheafOfModules.isInvertible_unit T
   obtain ⟨v, hv⟩ := (unitsGlobalSectionsMulEquivAut (𝟙_ T.Modules)).surjective
-    (P.rigidification.symm ≪≫ (Scheme.Modules.pullback s).mapIso e ≪≫ Q.rigidification)
-  have hv' := congrArg Iso.hom hv
-  rw [unitsGlobalSectionsMulEquivAut_apply_hom, Iso.trans_hom, Iso.trans_hom, Iso.symm_hom,
+    (Aut.of (P.rigidification.symm ≪≫ (Scheme.Modules.pullback s).mapIso e ≪≫ Q.rigidification))
+  have hv' := congrArg (fun f => f.asIso.hom) hv
+  rw [unitsGlobalSectionsMulEquivAut_apply_asIso_hom, Iso.trans_hom, Iso.trans_hom, Iso.symm_hom,
     Functor.mapIso_hom] at hv'
   refine ⟨v, ?_⟩
   rw [smul_mk, mk_eq_mk_iff]
@@ -301,8 +299,8 @@ lemma stabilizer_eq_range (a : RigidifiedLineBundleClass s) :
   have : SheafOfModules.isInvertible T (𝟙_ T.Modules) := SheafOfModules.isInvertible_unit T
   constructor
   · rintro ⟨u, hu⟩
-    rw [← globalSectionsAction_apply, ← globalSectionsAction_apply] at hu
-    exact ⟨u, (globalSectionsAction_injective (𝟙_ T.Modules) hu).symm⟩
+    rw [← globalSectionsAction_apply_asHom, ← globalSectionsAction_apply_asHom] at hu
+    exact ⟨u, (globalSectionsAction_injective (𝟙_ T.Modules) (End.ext hu)).symm⟩
   · rintro ⟨u, hu⟩
     exact ⟨u, congrArg (globalSectionsSmul (𝟙_ T.Modules)) hu.symm⟩
 

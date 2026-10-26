@@ -92,7 +92,7 @@ noncomputable def torsion : Grp (Over S) :=
 /-- **The `n`-torsion is the kernel of the endomorphism `n`.** The `n`-torsion of `E` is the kernel
 of the image in `Grp (Over S)` of the integer `n` of the endomorphism ring `End E.toCommGrp`. -/
 theorem torsion_eq_kernel :
-    E.torsion n = kernel ((CommGrp.forget₂Grp (Over S)).map (n : End E.toCommGrp)) := by
+    E.torsion n = kernel ((CommGrp.forget₂Grp (Over S)).map (n : End E.toCommGrp).asHom) := by
   rw [forget₂Grp_map_intCast]
   -- `(CommGrp.forget₂Grp (Over S)).obj E.toCommGrp` is `Grp.mk (Over.mk E.structureMap)` by
   -- definition, so both sides are the kernel of `Grp.ofHom (E.mulBy n)`
