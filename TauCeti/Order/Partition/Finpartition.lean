@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 public import Mathlib.Order.Partition.Finpartition
 
 /-!

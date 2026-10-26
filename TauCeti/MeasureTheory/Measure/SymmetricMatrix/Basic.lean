@@ -9,7 +9,7 @@ public import TauCeti.Analysis.Matrix.Frobenius
 public import Mathlib.Analysis.InnerProductSpace.Subspace
 public import Mathlib.Analysis.Matrix.MeasurableSpace
 public import Mathlib.Data.Sym.Card
-public import Mathlib.Data.Sym.Sym2.Order
+public import Mathlib.Order.Sym2
 public import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
