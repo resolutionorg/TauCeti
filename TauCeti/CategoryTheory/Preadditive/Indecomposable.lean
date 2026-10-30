@@ -254,13 +254,16 @@ other idempotents is local by Fitting's lemma
 theorem isLocalRing_end_of_indecomposable {k : Type*} [Field k] [Linear k C]
     [HasBinaryBiproducts C] [IsIdempotentComplete C] {X : C} [FiniteDimensional k (X ⟶ X)]
     (hX : Indecomposable X) : IsLocalRing (End X) := by
-  have : FiniteDimensional k (End X) := ‹FiniteDimensional k (X ⟶ X)›
+  have : FiniteDimensional k (End X) :=
+    (End.linearEquiv (R := k) (X := X)).symm.finiteDimensional
   have hA : IsFiniteLength (End X) (End X) := isFiniteLength_iff_isNoetherian_isArtinian.2
     ⟨isNoetherian_of_tower k inferInstance, isArtinian_of_tower k inferInstance⟩
+  have hne : (1 : End X) ≠ 0 := fun h ↦
+    hX.1 ((IsZero.iff_id_eq_zero X).2 (congrArg End.asHom h))
   refine isLocalRing_of_isIndecomposableModule_self hA ((isIndecomposableModule_self_iff _).2
-    ⟨nontrivial_of_ne (𝟙 X) 0 fun h ↦ hX.1 ((IsZero.iff_id_eq_zero X).2 h), fun e he ↦ ?_⟩)
-  simpa only [End.one_def] using
-    idempotent_eq_zero_or_id_of_indecomposable hX ((End.mul_def e e).symm.trans he.eq)
+    ⟨nontrivial_of_ne (1 : End X) 0 hne, fun e he ↦ ?_⟩)
+  have hs : e.asHom ≫ e.asHom = e.asHom := congrArg End.asHom he.eq
+  exact (idempotent_eq_zero_or_id_of_indecomposable hX hs).imp End.ext End.ext
 
 end TauCeti
 
