@@ -30,6 +30,8 @@ polynomial also preserves the degree of its derivative. -/
 theorem _root_.Polynomial.natDegree_map_derivative_eq_of_natDegree_map_eq {f : R →+* S}
     {p : R[X]} (h : (p.map f).natDegree = p.natDegree) :
     (p.derivative.map f).natDegree = p.derivative.natDegree := by
+  let : HasUniqueDiv S := ⟨fun {_} hn {_ _} h' ↦
+    eq_of_nsmul_eq_nsmul_of_addCommute hn (add_comm _ _) h'⟩
   refine Nat.le_antisymm natDegree_map_le ?_
   rw [← derivative_map, natDegree_derivative (p.map f), h]
   exact natDegree_derivative_le p

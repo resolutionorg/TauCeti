@@ -379,6 +379,10 @@ theorem natDegree_gcd_map_derivative_eq_of_collinsProjection [IsAddTorsionFree K
     (h : ∀ a ∈ F.collinsProjection, φ a = 0 ↔ ψ a = 0) (hp : p ∈ F) :
     (EuclideanDomain.gcd (p.map φ) (p.map φ).derivative).natDegree =
       (EuclideanDomain.gcd (p.map ψ) (p.map ψ).derivative).natDegree := by
+  let : HasUniqueDiv K := ⟨fun {_} hn {_ _} h' ↦
+    eq_of_nsmul_eq_nsmul_of_addCommute hn (add_comm _ _) h'⟩
+  let : HasUniqueDiv L := ⟨fun {_} hn {_ _} h' ↦
+    eq_of_nsmul_eq_nsmul_of_addCommute hn (add_comm _ _) h'⟩
   have hdeg := natDegree_map_eq_of_collinsProjection h hp
   rcases eq_or_ne (p.map ψ).derivative 0 with h0 | h0
   · have h0' : (p.map φ).derivative = 0 := by
